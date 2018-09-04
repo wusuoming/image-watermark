@@ -219,8 +219,6 @@ public class WaterMarkUtils {
     private static void createWaterMark(Mat comImg, Mat wm) {
         MatVector combine = new MatVector(2);
         Mat iwm = new Mat();
-//        System.out.println(comImg.rows() / 2 - wm.rows());
-//        System.out.println(comImg.cols() - wm.cols());
         copyMakeBorder(wm, wm, 0, comImg.rows() / 2 - wm.rows(),
                 0, comImg.cols() - wm.cols(), BORDER_CONSTANT, Scalar.all(0));
         combine.put(0, wm);
@@ -229,17 +227,4 @@ public class WaterMarkUtils {
         vconcat(combine, wm);
     }
 
-    private static void help() {
-        System.out.println("Usage: java -jar WaterMarkUtils.jar <commands> [args...] \n" +
-                "   commands: \n" +
-                "       encode <option> <image-src>  <watermark-text>       <image-encoded(text)>\n" +
-                "       encode <option> <image-src>  <watermark-image>      <image-encoded(image)>\n" +
-                "       decode <image-encode(text)>  <image-decode>\n" +
-                "       decode <image-src>           <image-encoded(image)> <image-decode>\n" +
-                "   options: \n" +
-                "       -i add image watermark\n" +
-                "       -t add text  watermark\n"
-        );
-        System.exit(-1);
-    }
 }
