@@ -82,7 +82,7 @@
                     </imageTags>
                     <!--相当于from基于父镜像-->
                     <!--<baseImage>openjdk:8u171-jdk-alpine3.8</baseImage>-->
-                    <baseImage>daocloud.io/library/java:openjdk-8u40-b22</baseImage>
+                    <baseImage>daocloud.io/library/java:openjdk-8u40-b09-jre</baseImage>
 
 
                     <!--远程docker服务地址-->
