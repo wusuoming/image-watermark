@@ -27,8 +27,10 @@ public class FileController {
 
     @PostConstruct
     public void init() throws FileNotFoundException {
-        File path = new File(ResourceUtils.getURL("classpath:").getPath());
-        imageFilePath = path.getPath() + "/";
+        File path = new File(ResourceUtils.getURL("").getPath());
+
+        imageFilePath = path.getAbsolutePath() + "/";
+
 
     }
 
