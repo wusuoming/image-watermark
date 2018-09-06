@@ -1,9 +1,10 @@
 package com.luohuasheng.controller;
 
+import com.luohuasheng.service.WaterMarkService;
 import com.luohuasheng.utils.DateUtils;
-import com.luohuasheng.utils.WaterMarkUtils;
+import com.luohuasheng.utils.FileUtils;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StreamUtils;
@@ -20,62 +21,62 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 
+/**
+ * @author wusuoming
+ */
 @Controller
 public class FileController {
 
+    @Autowired
+    private WaterMarkService waterMarkService;
+
     private String imageFilePath;
+
 
     @PostConstruct
     public void init() throws FileNotFoundException {
         File path = new File(ResourceUtils.getURL("").getPath());
-
+        if (!path.exists()) {
+            path = new File("");
+        }
         imageFilePath = path.getAbsolutePath() + "/";
 
 
     }
 
 
-    @PostMapping("/dft")
+    @PostMapping("/encode")
     @ApiOperation(value = "添加水印", produces = "application/octet-stream")
-    public void dft(HttpServletResponse response, @RequestParam("image") MultipartFile image, String msg) throws IOException {
-        WaterMarkUtils bwm = new WaterMarkUtils();
+    public void encode(HttpServletResponse response, @RequestParam("image") MultipartFile image, @RequestParam("msg") String msg, @RequestParam(value = "level", defaultValue = "1", required = false) Integer level) throws IOException {
         String filePath = String.format("%s%s", imageFilePath, DateUtils.format(new Date(), "yyyy/MM/dd/HH/"));
         String originalFileName = image.getOriginalFilename();
-        String sourceFilePath = filePath + "/1/" + originalFileName;
-        String targetFilePath = filePath + "/2/" + originalFileName;
-        image.transferTo(checkFilePath(sourceFilePath));
-        File file = checkFilePath(targetFilePath);
-        bwm.encode(sourceFilePath, msg, targetFilePath, true);
+        String sourceFilePath = filePath + "/1/" + FileUtils.getSaveFileName(originalFileName);
+        String targetFilePath = filePath + "/2/" + FileUtils.getSaveFileName(originalFileName);
+        image.transferTo(FileUtils.checkFilePath(sourceFilePath));
+        File file = FileUtils.checkFilePath(targetFilePath);
+        waterMarkService.encode(sourceFilePath, msg, targetFilePath, true, level);
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(image.getOriginalFilename().getBytes("UTF-8"), "ISO-8859-1") + "\";");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(originalFileName.getBytes("UTF-8"), "ISO-8859-1") + "\";");
         ServletOutputStream out = response.getOutputStream();
         StreamUtils.copy(new FileInputStream(file), response.getOutputStream());
         out.close();
     }
 
-    private File checkFilePath(String filePath) {
-        File file = new File(filePath);
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdirs();
-        }
-        return file;
 
-    }
-
-    @PostMapping("/idft")
+    @PostMapping("/decode")
     @ApiOperation(value = "获取水印", produces = "application/octet-stream")
-    public void idft(HttpServletResponse response, @RequestParam("image") MultipartFile image) throws IOException {
-        WaterMarkUtils bwm = new WaterMarkUtils();
+    public void decode(HttpServletResponse response, @RequestParam("image") MultipartFile image, @RequestParam(value = "level", defaultValue = "1", required = false) Integer level) throws IOException {
         String filePath = String.format("%s%s", imageFilePath, DateUtils.format(new Date(), "yyyy/MM/dd/HH/"));
         String originalFileName = image.getOriginalFilename();
-        String sourceFilePath = filePath + "/3/" + originalFileName;
-        String targetFilePath = filePath + "/4/" + originalFileName;
-        image.transferTo(checkFilePath(sourceFilePath));
-        File file = checkFilePath(targetFilePath);
-        bwm.decode(sourceFilePath, targetFilePath);
+        String sourceFilePath = filePath + "/3/" + FileUtils.getSaveFileName(originalFileName);
+        String targetFilePath = filePath + "/4/" + FileUtils.getSaveFileName(originalFileName);
+        image.transferTo(FileUtils.checkFilePath(sourceFilePath));
+        File file = FileUtils.checkFilePath(targetFilePath);
+        waterMarkService.decode(sourceFilePath, targetFilePath, level);
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(image.getOriginalFilename().getBytes("UTF-8"), "ISO-8859-1") + "\";");
         StreamUtils.copy(new FileInputStream(file), response.getOutputStream());
     }
+
 
 }
