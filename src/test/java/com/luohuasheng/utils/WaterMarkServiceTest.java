@@ -13,7 +13,7 @@ public class WaterMarkServiceTest {
 
     @Test
     public void decodeForText() {
-        bwm.decode("gakki-wm-text.png", "gakki-text-dc.png", 3);
+        bwm.decode("gakki-wm-text.png", "gakki-text-dc.png");
 
     }
 

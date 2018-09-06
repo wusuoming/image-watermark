@@ -101,8 +101,7 @@ public class WaterMarkService {
      * @param wmImg  加了文本水印的图像
      * @param output 图像中文本水印
      */
-    public void decode(String wmImg, String output, Integer level) {
-        localLevel.set(level);
+    public void decode(String wmImg, String output) {
 
         MatVector newPlanes = new MatVector(3);
 

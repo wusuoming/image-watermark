@@ -65,14 +65,14 @@ public class FileController {
 
     @PostMapping("/decode")
     @ApiOperation(value = "获取水印", produces = "application/octet-stream")
-    public void decode(HttpServletResponse response, @RequestParam("image") MultipartFile image, @RequestParam(value = "level", defaultValue = "1", required = false) Integer level) throws IOException {
+    public void decode(HttpServletResponse response, @RequestParam("image") MultipartFile image) throws IOException {
         String filePath = String.format("%s%s", imageFilePath, DateUtils.format(new Date(), "yyyy/MM/dd/HH/"));
         String originalFileName = image.getOriginalFilename();
         String sourceFilePath = filePath + "/3/" + FileUtils.getSaveFileName(originalFileName);
         String targetFilePath = filePath + "/4/" + FileUtils.getSaveFileName(originalFileName);
         image.transferTo(FileUtils.checkFilePath(sourceFilePath));
         File file = FileUtils.checkFilePath(targetFilePath);
-        waterMarkService.decode(sourceFilePath, targetFilePath, level);
+        waterMarkService.decode(sourceFilePath, targetFilePath);
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + new String(image.getOriginalFilename().getBytes("UTF-8"), "ISO-8859-1") + "\";");
         StreamUtils.copy(new FileInputStream(file), response.getOutputStream());
