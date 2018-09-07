@@ -1,6 +1,7 @@
 package com.luohuasheng.service;
 
 import org.bytedeco.javacpp.indexer.UByteIndexer;
+import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_imgproc;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +26,18 @@ public class WaterMarkService {
     public void encode(String image, String watermark, String output, Boolean text, Integer level) {
         localLevel.set(level);
         MatVector newPlanes = new MatVector(3);
-        Mat srcImg = imread(image, CV_LOAD_IMAGE_COLOR);
+        Mat srcImg = imread(image, CV_LOAD_IMAGE_ANYCOLOR);
         setLocalSorts(srcImg);
         List<Integer> sorts = localSort.get();
         MatVector color = new MatVector(3);
         split(srcImg, color);
         MatVector[] planes = {new MatVector(2), new MatVector(2), new MatVector(2)};
         for (int i = 0; i < color.size(); i++) {
+            imwrite(i+".jpg",color.get(i));
             color.get(i).convertTo(color.get(i), CV_32F);
             Mat comImg = startDFT(color.get(i));
             if (level == 1) {
-                if (i == sorts.get(0)) {
+                if (i == sorts.get(1)) {
                     if (text) {
                         addTextWaterMark(comImg, watermark);
                     } else {
@@ -104,23 +106,54 @@ public class WaterMarkService {
     public void decode(String wmImg, String output) {
 
         MatVector newPlanes = new MatVector(3);
-
+        Mat srcImg = null;
         for (int i = 0; i < 3; i++) {
-            Mat srcImg = imread(wmImg, i == 2 ? CV_LOAD_IMAGE_GRAYSCALE : CV_LOAD_IMAGE_COLOR);
+            srcImg = imread(wmImg, i == 2 ? CV_LOAD_IMAGE_GRAYSCALE : CV_LOAD_IMAGE_ANYCOLOR);
             if (localSort.get() == null) {
                 setLocalSorts(srcImg);
             }
             localLevel.set(i + 1);
             newPlanes.put(i, transformImage(srcImg));
         }
+//        cleanSamePixel(newPlanes, srcImg);
+
         Mat nImg2 = new Mat();
         Mat nImg = new Mat();
         vconcat(newPlanes.get(0), newPlanes.get(1), nImg);
         vconcat(nImg, newPlanes.get(2), nImg2);
 //        merge(newPlanes, nImg2);
+//        ImageUtils.pictureRemove(nImg2);
         imwrite(output, nImg2);
         localLevel.remove();
     }
+
+//    private void cleanSamePixel(MatVector newPlanes, Mat srcImg) {
+//        Map<Integer, BufferedImage> imageHashMap = new TreeMap<>();
+//        for (Integer k = 0; k < newPlanes.size(); k++) {
+//            imageHashMap.put(k, ImageUtils.javacvToBufferedImage(newPlanes.get(k)));
+//        }
+//        Set<Integer> values = new HashSet<>();
+//
+//        for (int i = 0; i < srcImg.cols(); i++) {
+//            for (int j = 0; j < srcImg.rows(); j++) {
+//                values.clear();
+//                for (Integer k = 0; k < newPlanes.size(); k++) {
+//                    values.add(imageHashMap.get(k).getRGB(i, j));
+//                }
+//                if (values.size() < 2) {
+//                    for (Integer k = 0; k < newPlanes.size(); k++) {
+//                        imageHashMap.get(k).setRGB(i, j, Color.WHITE.getRGB());
+//                    }
+//                }
+//            }
+//
+//        }
+//        for (int i = 0; i < imageHashMap.values().size(); i++) {
+//            newPlanes.put(i, ImageUtils.bufferedImageToJavacv(imageHashMap.get(i)));
+//        }
+//
+//
+//    }
 
 
     private Mat transformImage2(Mat decImg) {
@@ -226,7 +259,7 @@ public class WaterMarkService {
     private static void addTextWaterMark(Mat comImg, String watermark) {
 
         Scalar scalar = new Scalar(255, 255, 255, 255);
-        Point p = new Point(40, 40);
+        opencv_core.Point p = new opencv_core.Point(40, 40);
         // 添加字符串
         putText(comImg, watermark, p, opencv_imgproc.CV_FONT_HERSHEY_COMPLEX, 1.5, scalar, 2, LINE_8, false);
         // 旋转图片
@@ -282,7 +315,7 @@ public class WaterMarkService {
         List<Integer> sorts = localSort.get();
 
         if (level == 1) {
-            Mat padded = splitSrc(image, sorts.get(0));
+            Mat padded = splitSrc(image, sorts.get(1));
             padded.convertTo(padded, CV_32F);
             planes.put(0, padded);
             planes.put(1, padded);

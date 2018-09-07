@@ -101,6 +101,16 @@
 
 
     </style>
+    <script>
+        function toVaild(form) {
+            if (form.image.value) {
+                return true;
+            } else {
+                alert("文件不能为空");
+                return false;
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="basic-grey">
@@ -108,7 +118,7 @@
     <span style="color: red;">给图片添加看不见的水印。请选择JPG、PNG格式的图片，其他格式未尝试，图片大小4M以内</span>
 </div>
 <br/>
-<form action="/encode" enctype="multipart/form-data" method="post" class="basic-grey">
+<form action="/encode" enctype="multipart/form-data" method="post" class="basic-grey" onsubmit="return toVaild(this)">
     <h1>添加水印</h1>
     <label>
         <span>选择文件 :</span>
@@ -121,9 +131,9 @@
     </label>
     <label>
         <span>水印级别 :</span><select name="level">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
+        <option value="1">弱</option>
+        <option value="2">中</option>
+        <option value="3">强</option>
     </select>
     </label>
     <label>
@@ -132,7 +142,7 @@
     </label>
 </form>
 <br/>
-<form action="/decode" enctype="multipart/form-data" method="post" class="basic-grey">
+<form action="/decode" enctype="multipart/form-data" method="post" class="basic-grey" onsubmit="return toVaild(this)">
     <h1>提取水印</h1>
     <label>
         <span>选择文件 :</span>
