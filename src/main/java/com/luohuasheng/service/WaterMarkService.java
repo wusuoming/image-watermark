@@ -32,6 +32,7 @@ public class WaterMarkService {
         split(srcImg, color);
         MatVector[] planes = {new MatVector(2), new MatVector(2), new MatVector(2)};
         for (int i = 0; i < color.size(); i++) {
+            imwrite(i + ".jpg", color.get(i));
             color.get(i).convertTo(color.get(i), CV_32F);
             Mat comImg = startDFT(color.get(i));
             if (level == 1) {
@@ -117,10 +118,12 @@ public class WaterMarkService {
         Mat nImg = new Mat();
         vconcat(newPlanes.get(0), newPlanes.get(1), nImg);
         vconcat(nImg, newPlanes.get(2), nImg2);
-//        merge(newPlanes,nImg2);
+//        merge(newPlanes, nImg2);
         imwrite(output, nImg2);
         localLevel.remove();
     }
+
+
 
 
     private Mat transformImage2(Mat decImg) {
@@ -228,10 +231,10 @@ public class WaterMarkService {
         Scalar scalar = new Scalar(255, 255, 255, 255);
         Point p = new Point(40, 40);
         // 添加字符串
-        putText(comImg, watermark, p, opencv_imgproc.CV_FONT_HERSHEY_DUPLEX, 1, scalar, 2, LINE_8, false);
+        putText(comImg, watermark, p, opencv_imgproc.CV_FONT_HERSHEY_COMPLEX, 1.5, scalar, 2, LINE_8, false);
         // 旋转图片
         flip(comImg, comImg, -1);
-        putText(comImg, watermark, p, opencv_imgproc.CV_FONT_HERSHEY_DUPLEX, 1, scalar, 2, LINE_8, false);
+        putText(comImg, watermark, p, opencv_imgproc.CV_FONT_HERSHEY_COMPLEX, 1.5, scalar, 2, LINE_8, false);
         flip(comImg, comImg, -1);
     }
 
@@ -339,21 +342,22 @@ public class WaterMarkService {
         private Integer index;
         private Integer sum;
 
-        public Integer getIndex() {
+        Integer getIndex() {
             return index;
         }
 
-        public void setIndex(Integer index) {
+        void setIndex(Integer index) {
             this.index = index;
         }
 
-        public Integer getSum() {
+        Integer getSum() {
             return sum;
         }
 
-        public void setSum(Integer sum) {
+        void setSum(Integer sum) {
             this.sum = sum;
         }
     }
+
 
 }
