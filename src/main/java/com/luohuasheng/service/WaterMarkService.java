@@ -32,7 +32,6 @@ public class WaterMarkService {
         split(srcImg, color);
         MatVector[] planes = {new MatVector(2), new MatVector(2), new MatVector(2)};
         for (int i = 0; i < color.size(); i++) {
-            imwrite(i + ".jpg", color.get(i));
             color.get(i).convertTo(color.get(i), CV_32F);
             Mat comImg = startDFT(color.get(i));
             if (level == 1) {
@@ -122,8 +121,6 @@ public class WaterMarkService {
         imwrite(output, nImg2);
         localLevel.remove();
     }
-
-
 
 
     private Mat transformImage2(Mat decImg) {
