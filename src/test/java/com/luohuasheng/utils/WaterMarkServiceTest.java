@@ -1,7 +1,7 @@
 package com.luohuasheng.utils;
 
-        import com.luohuasheng.service.WaterMarkService;
-        import org.junit.Test;
+import com.luohuasheng.service.WaterMarkService;
+import org.junit.Test;
 
 public class WaterMarkServiceTest {
     WaterMarkService bwm = new WaterMarkService();
@@ -24,7 +24,7 @@ public class WaterMarkServiceTest {
 
     @Test
     public void decodeForImg() {
-        bwm.decode("img/gakki.png", "img/gakki-wm-img2.png", "img/gakki-img-dc2.png");
+        bwm.decode("img/gakki.png", "img/gakki-wm-img.png", "img/gakki-img-dc2.png");
 
     }
 }

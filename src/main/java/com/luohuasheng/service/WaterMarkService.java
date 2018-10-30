@@ -27,15 +27,17 @@ public class WaterMarkService {
         localLevel.set(level);
         MatVector newPlanes = new MatVector(3);
         Mat srcImg = imread(image, CV_LOAD_IMAGE_ANYCOLOR);
+        write(srcImg, watermark);
         setLocalSorts(srcImg);
         List<Integer> sorts = localSort.get();
         MatVector color = new MatVector(3);
         split(srcImg, color);
         MatVector[] planes = {new MatVector(2), new MatVector(2), new MatVector(2)};
         for (int i = 0; i < color.size(); i++) {
-            imwrite(i+".jpg",color.get(i));
-            color.get(i).convertTo(color.get(i), CV_32F);
-            Mat comImg = startDFT(color.get(i));
+            Mat comImg = color.get(i);
+            comImg.convertTo(comImg, CV_32F);
+            comImg = startDFT(comImg);
+//            comImg.convertTo(comImg, CV_8UC1);
             if (level == 1) {
                 if (i == sorts.get(1)) {
                     if (text) {
@@ -61,7 +63,7 @@ public class WaterMarkService {
                 }
 
             }
-
+//            comImg.convertTo(comImg, CV_32F);
             inverseDFT(comImg, planes[i]);
             newPlanes.put(i, comImg);
         }
@@ -70,6 +72,41 @@ public class WaterMarkService {
         imwrite(output, nImg);
         localLevel.remove();
         localSort.remove();
+    }
+
+    private void convert8uto32f(Mat comImg) {
+//        Mat grey = new Mat();
+//        cvtColor(comImg, grey, CV_BGR2BGRA);
+//
+//        Mat sobelx = new Mat();
+//        Sobel(grey, sobelx, CV_32F, 1, 0);
+//
+//        double minVal = 0, maxVal = 0;
+////        minMaxLoc(sobelx, minVal, maxVal);
+//        Mat draw = new Mat();
+//        sobelx.convertTo(draw, CV_8U, 255.0 / (maxVal - minVal), -minVal);
+    }
+
+    private void write(Mat srcImg, String watermark) {
+
+//        opencv_freetype.FreeType2 ft2 = opencv_freetype.createFreeType2();
+//        //需要载入一个一种中文的字体  这里是宋体
+//        ft2.loadFontData("src/main/resources/font/simsun.ttc", 0);
+//        Size size = ft2.getTextSize(watermark, 55, 0, new IntPointer(0));
+//
+//        opencv_core.Point p = new opencv_core.Point(srcImg.cols() / 4 - size.width() / 2, srcImg.rows() / 4 - size.height() / 2);
+//        opencv_core.Point p2 = new opencv_core.Point(srcImg.cols() / 4 - size.width() / 2, srcImg.rows() * 3 / 4 - size.height() / 2);
+//        opencv_core.Point p3 = new opencv_core.Point(srcImg.cols() * 3 / 4 - size.width() / 2, srcImg.rows() / 4 - size.height() / 2);
+//        opencv_core.Point p4 = new opencv_core.Point(srcImg.cols() * 3 / 4 - size.width() / 2, srcImg.rows() * 3 / 4 - size.height() / 2);
+
+//        ft2.putText(srcImg, watermark, p, 55, Scalar.BLACK, 0, opencv_core.LINE_AA, true);
+//        ft2.putText(srcImg, watermark, p2, 55, Scalar.BLACK, 0, opencv_core.LINE_AA, true);
+        // 旋转图片
+//        flip(srcImg, srcImg, -1);
+//        ft2.putText(srcImg, watermark, p3, 55, Scalar.BLACK, 0, opencv_core.LINE_AA, true);
+//        ft2.putText(srcImg, watermark, p4, 55, Scalar.BLACK, 0, opencv_core.LINE_AA, true);
+
+//        flip(srcImg, srcImg, -1);
     }
 
     public void setLocalSorts(Mat srcImg) {
@@ -115,45 +152,14 @@ public class WaterMarkService {
             localLevel.set(i + 1);
             newPlanes.put(i, transformImage(srcImg));
         }
-//        cleanSamePixel(newPlanes, srcImg);
 
         Mat nImg2 = new Mat();
         Mat nImg = new Mat();
         vconcat(newPlanes.get(0), newPlanes.get(1), nImg);
         vconcat(nImg, newPlanes.get(2), nImg2);
-//        merge(newPlanes, nImg2);
-//        ImageUtils.pictureRemove(nImg2);
         imwrite(output, nImg2);
         localLevel.remove();
     }
-
-//    private void cleanSamePixel(MatVector newPlanes, Mat srcImg) {
-//        Map<Integer, BufferedImage> imageHashMap = new TreeMap<>();
-//        for (Integer k = 0; k < newPlanes.size(); k++) {
-//            imageHashMap.put(k, ImageUtils.javacvToBufferedImage(newPlanes.get(k)));
-//        }
-//        Set<Integer> values = new HashSet<>();
-//
-//        for (int i = 0; i < srcImg.cols(); i++) {
-//            for (int j = 0; j < srcImg.rows(); j++) {
-//                values.clear();
-//                for (Integer k = 0; k < newPlanes.size(); k++) {
-//                    values.add(imageHashMap.get(k).getRGB(i, j));
-//                }
-//                if (values.size() < 2) {
-//                    for (Integer k = 0; k < newPlanes.size(); k++) {
-//                        imageHashMap.get(k).setRGB(i, j, Color.WHITE.getRGB());
-//                    }
-//                }
-//            }
-//
-//        }
-//        for (int i = 0; i < imageHashMap.values().size(); i++) {
-//            newPlanes.put(i, ImageUtils.bufferedImageToJavacv(imageHashMap.get(i)));
-//        }
-//
-//
-//    }
 
 
     private Mat transformImage2(Mat decImg) {
@@ -267,6 +273,7 @@ public class WaterMarkService {
         putText(comImg, watermark, p, opencv_imgproc.CV_FONT_HERSHEY_COMPLEX, 1.5, scalar, 2, LINE_8, false);
         flip(comImg, comImg, -1);
     }
+
 
     /**
      * 添加图片水印

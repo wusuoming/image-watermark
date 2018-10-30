@@ -1,6 +1,5 @@
 package com.luohuasheng;
 
-import org.opencv.core.Core;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -14,8 +13,7 @@ public class ImageApplication extends WebMvcConfigurationSupport {
 
     public static void main(String[] args) {
 
-        System.out.println("Welcome to OpenCV " + Core.VERSION + ", lib is: " + Core.NATIVE_LIBRARY_NAME);
-        SpringApplication.run(ImageApplication.class, args);
+         SpringApplication.run(ImageApplication.class, args);
     }
 
 
