@@ -27,7 +27,7 @@ public class WaterMarkService {
         localLevel.set(level);
         MatVector newPlanes = new MatVector(3);
         Mat srcImg = imread(image, CV_LOAD_IMAGE_ANYCOLOR);
-        write(srcImg, watermark);
+//        write(srcImg, watermark);
         setLocalSorts(srcImg);
         List<Integer> sorts = localSort.get();
         MatVector color = new MatVector(3);
@@ -87,8 +87,8 @@ public class WaterMarkService {
 //        sobelx.convertTo(draw, CV_8U, 255.0 / (maxVal - minVal), -minVal);
     }
 
-    private void write(Mat srcImg, String watermark) {
-
+//    private void write(Mat srcImg, String watermark) {
+//
 //        opencv_freetype.FreeType2 ft2 = opencv_freetype.createFreeType2();
 //        //需要载入一个一种中文的字体  这里是宋体
 //        ft2.loadFontData("src/main/resources/font/simsun.ttc", 0);
@@ -98,16 +98,16 @@ public class WaterMarkService {
 //        opencv_core.Point p2 = new opencv_core.Point(srcImg.cols() / 4 - size.width() / 2, srcImg.rows() * 3 / 4 - size.height() / 2);
 //        opencv_core.Point p3 = new opencv_core.Point(srcImg.cols() * 3 / 4 - size.width() / 2, srcImg.rows() / 4 - size.height() / 2);
 //        opencv_core.Point p4 = new opencv_core.Point(srcImg.cols() * 3 / 4 - size.width() / 2, srcImg.rows() * 3 / 4 - size.height() / 2);
-
+//
 //        ft2.putText(srcImg, watermark, p, 55, Scalar.BLACK, 0, opencv_core.LINE_AA, true);
 //        ft2.putText(srcImg, watermark, p2, 55, Scalar.BLACK, 0, opencv_core.LINE_AA, true);
-        // 旋转图片
+//        // 旋转图片
 //        flip(srcImg, srcImg, -1);
 //        ft2.putText(srcImg, watermark, p3, 55, Scalar.BLACK, 0, opencv_core.LINE_AA, true);
 //        ft2.putText(srcImg, watermark, p4, 55, Scalar.BLACK, 0, opencv_core.LINE_AA, true);
-
+//
 //        flip(srcImg, srcImg, -1);
-    }
+//    }
 
     public void setLocalSorts(Mat srcImg) {
         UByteIndexer indexer = srcImg.createIndexer();
